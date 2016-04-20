@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	  http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+ 	  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+ 	  http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+ 	  http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<!-- 数据源定义,使用Apache DBCP 连接池 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<!-- <value>classpath:#{T(com.saike.ebiz.conf.BaseEnvironment).SYS_ENV}/jdbc.properties</value> -->
+				<value>classpath:jdbc.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- mysql -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${orm.mysql.jdbc.driverClassName}" />
+		<property name="url" value="${orm.mysql.jdbc.url}" />
+		<property name="username" value="${orm.mysql.jdbc.username}" />
+		<property name="password" value="${orm.mysql.jdbc.password}" />
+		<!-- 初始化连接 -->
+		<property name="initialSize" value="10" />
+		<!-- 最大连接数 -->
+		<property name="maxActive" value="50" />
+		<!-- 最大空闲连接 -->
+		<property name="maxIdle" value="30" />
+		<!-- 最小空闲连接 -->
+		<property name="minIdle" value="15" />
+		<!-- 是否自动回收超时连接 -->
+		<property name="removeAbandoned" value="true" />
+		<!-- 超时时间（以秒数为单位） -->
+		<property name="removeAbandonedTimeout" value="180" />
+		<!-- 超时等待时间以毫秒为单位6000毫秒/1000等于60秒 -->
+		<property name="maxWait" value="30000" />
+		<!-- 代表检查的sql -->
+		<property name="validationQuery" value="SELECT 1 FROM dual" />
+		<!-- 每次拿到connection先进行校验 -->
+		<property name="testOnBorrow" value="true" />
+	</bean>
+
+</beans>

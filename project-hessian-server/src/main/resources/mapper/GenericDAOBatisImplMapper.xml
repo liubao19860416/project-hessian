@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hessian.server.dao.base.GenericDAOBatisImplMapper">
+
+	<insert id="batchInsert" parameterType="map" useGeneratedKeys="true" keyProperty="id">
+		insert into ${table_name}
+		<foreach item="field" index="index" collection="fields" open="(" separator="," close=")">
+			${field}
+		</foreach>
+		values
+		<foreach item="list" index="index" collection="values" separator=",">
+			<foreach item="value" index="index" collection="list" open="(" separator="," close=")">
+				#{value}
+			</foreach>
+		</foreach>
+		<!-- <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id" keyColumn="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey> -->
+	</insert>
+	
+	<insert id="signalInsert" parameterType="map" >
+		insert into ${table_name}
+		<foreach item="field" index="index" collection="fields" open="(" separator="," close=")">
+			${field}
+		</foreach>
+		values
+		<foreach item="list" index="index" collection="values" open="(" separator="," close=")">
+			#{value}
+		</foreach>
+		<!-- <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id" keyColumn="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey> -->
+	</insert>
+
+	<update id="updateByCode" parameterType="map">
+		update ${table_name} set
+		<if test="fields!=null">
+			<foreach item="field" index="idx" collection="fields" separator=",">
+				<foreach collection="values" index="idv" item="value">
+					<if test="idx==idv">
+						${field}=#{value}
+					</if>
+					<if test="idx==0">
+						updatedDatetime=CURRENT_TIMESTAMP
+					</if>
+				</foreach>
+			</foreach>
+			where code=#{code}
+		</if>
+	</update>
+	
+	<!-- conditions为约定好的信息 -->
+	<update id="updateWithMap" parameterType="map">
+		update ${table_name} set
+		<if test="fields!=null">
+			<foreach item="field" index="idx" collection="fields" separator="," >
+				<foreach item="value" index="idv" collection="values" >
+					<if test="idx==idv and field != 'conditions' ">
+						${field}=#{value}
+					</if>
+				</foreach>
+			</foreach>
+			<!-- <if test="conditionsFields !=null">
+			   <where>
+			   		<foreach item="field2" index="idxx" collection="conditionsFields" separator="AND" >
+						<foreach item="value2" index="idyy" collection="conditionsValues" >
+							<if test="idxx==idyy">
+								${field2}=#{value2}
+							</if>
+						</foreach>
+					</foreach>
+			   </where>
+			</if> -->
+			<if test="conditions !=null">
+			   <where>
+			   		<foreach item="field2" index="idxx" collection="conditions['fields']" separator="AND" >
+						<foreach item="value2" index="idyy" collection="conditions['values']" >
+							<if test="idxx==idyy">
+								${field2}=#{value2}
+							</if>
+						</foreach>
+					</foreach>
+			   </where>
+			</if>
+		</if>
+	</update>
+
+	<select id="selectAll" parameterType="map" resultType="map">
+		select * from ${table_name} 
+		<where>
+			<if test="ignore == false">
+			 	and actived=true and deleted=false
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectAllCount" parameterType="map" resultType="long">
+		select count(1) from ${table_name} 
+		<where>
+			<if test="ignore == false">
+			 	and actived=true and deleted=false
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPageQuery" parameterType="map" resultType="map">
+		select * from ${table_name} 
+		<where>
+			<!-- 遍历查询条件,这个位置只能使用$+#实现,提前将对应的参数转编译换为字符串,两个位置都使用$不适用于中文的查询情况 -->
+			<!-- #将传入的数据都当成一个字符串，会对自动传入的数据加一个双引号 -->
+			<if test="_parameter != null">
+				<foreach collection="_parameter" index="key" item="value" separator="and">
+					<if test="key != 'ignore' and key != 'table_name' and value !=null and value != ''">
+						${key}=#{value}
+					</if>
+				</foreach>
+			</if>
+			<if test="ignore == false">
+			 	and actived=true and deleted=false
+			</if>
+			and 1=1 order by id desc
+		</where>
+	</select>
+	
+	<!-- #将传入的数据都当成一个字符串，会对自动传入的数据加一个双引号,所以这里使用${key}=#{value}才可以 -->
+	<select id="selectByPageQueryCount" parameterType="map" resultType="long">
+		select count(1) from ${table_name} 
+		<where>
+			<if test="_parameter != null">
+				<foreach collection="_parameter" index="key"  item="value" separator="and">
+					<if test="key != 'ignore' and key != 'table_name' and value !=null and value != ''">
+						${key}=#{value}
+					</if>
+				</foreach>
+			</if>
+			<if test="ignore == false">
+			 	and actived=true and deleted=false
+			</if>
+		</where>
+	</select>
+	
+	<select id="findById" parameterType="map" resultType="map">
+		select * from ${table_name}
+		where id=#{id}
+		<if test="ignore==false">
+			and actived=true and deleted=false
+		</if>
+	</select>
+
+	<select id="findByCode" parameterType="map" resultType="map">
+		select * from ${table_name}
+		where code=#{code}
+		<if test="ignore==false">
+			and actived=true and deleted=false
+		</if>
+		FOR UPDATE
+	</select>
+	
+	<select id="findByIdList" parameterType="map" resultType="map">
+		select * from ${table_name}
+		<where>
+			and id in
+			<foreach item="code" index="index" collection="idList" open="(" separator="," close=")">
+				#{code}
+			</foreach>
+			<if test="ignore==false">
+				and actived=true and deleted=false
+			</if>
+		</where>
+	</select>
+
+	<select id="findByCodeList" parameterType="map" resultType="map">
+		select * from ${table_name}
+		<where>
+			and code in
+			<foreach item="code" index="index" collection="codeList" open="(" separator="," close=")">
+				#{code}
+			</foreach>
+			<if test="ignore==false">
+				and actived=true and deleted=false
+			</if>
+		</where>
+	</select>
+	
+	<update id="deleteByCode" parameterType="map">
+		update ${table_name} set actived=false, deleted=true,updatedDatetime=CURRENT_TIMESTAMP
+		where code=#{code};
+	</update>
+
+	<update id="deleteById" parameterType="map">
+		update ${table_name} set actived=false, deleted=true,updatedDatetime=CURRENT_TIMESTAMP
+		where id=#{id};
+	</update>
+
+	<update id="deleteByCodeList" parameterType="map">
+		update ${table_name} set actived=false, deleted=true,updatedDatetime=CURRENT_TIMESTAMP
+		where code in
+		<foreach item="code" index="index" collection="codeList" open="(" separator="," close=")">
+			#{code}
+		</foreach>
+	</update>
+	
+	<update id="deleteByIdList" parameterType="map">
+		update ${table_name} set actived=false, deleted=true ,updatedDatetime=CURRENT_TIMESTAMP
+		where id in
+		<foreach item="id" index="index" collection="idList" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</update>
+
+	<delete id="deletePhysicalByCodeList" parameterType="map">
+		<if test="codeList!=null">
+			delete from ${table_name} where code in
+			<foreach collection="codeList" index="idv" item="code" separator="," open="(" close=")">
+				#{code}
+			</foreach>
+		</if>
+	</delete>
+	<delete id="deletePhysicalByIdList" parameterType="map">
+		delete from ${table_name} where id in
+		<if test="idList!=null">
+			<foreach collection="idList" index="idv" item="id" separator="," open="(" close=")">
+				#{id}
+			</foreach>
+		</if>
+	</delete>
+
+</mapper> 

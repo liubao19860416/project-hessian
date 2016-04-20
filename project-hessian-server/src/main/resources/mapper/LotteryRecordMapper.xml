@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hessian.server.dao.impl.LotteryRecordDAOImplMapper">
+
+	<resultMap type="lotteryRecord" id="BaseResultMap">
+		<id column="id" property="id" jdbcType="INTEGER" />
+	    <result column="code" property="code" jdbcType="VARCHAR" />
+	    <result column="description" property="description" jdbcType="VARCHAR" />
+	    <result column="createdDatetime" property="createdDatetime" jdbcType="TIMESTAMP" />
+	    <result column="updatedDatetime" property="updatedDatetime" jdbcType="TIMESTAMP" />
+	    <result column="actived" property="actived" jdbcType="BOOLEAN" />
+	    <result column="deleted" property="deleted" jdbcType="BOOLEAN" />
+	    
+		<result property="issueNumber" column="issueNumber" jdbcType="VARCHAR"  />
+		<result property="red1" column="red1" jdbcType="INTEGER" />
+		<result property="red2" column="red2" jdbcType="INTEGER" />
+		<result property="red3" column="red3" jdbcType="INTEGER" />
+		<result property="red4" column="red4" jdbcType="INTEGER" />
+		<result property="red5" column="red5" jdbcType="INTEGER" />
+		<result property="red6" column="red6" jdbcType="INTEGER" />
+		<result property="blue" column="blue" jdbcType="INTEGER" />
+	</resultMap>
+	
+  <sql id="Base_Column_List" >
+    id, code,description,createdDatetime,updatedDatetime,actived,deleted,userName, telephone, message
+  </sql>
+
+</mapper>
