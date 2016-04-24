@@ -7,4 +7,5 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>project-hessian-api</artifactId>
+	<description>api 项目</description>
 </project>
