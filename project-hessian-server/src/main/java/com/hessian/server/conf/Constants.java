@@ -9,7 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
-
+/**
+ * 基础常量配置类
+ * 
+ * @author Liubao
+ * @2016年4月24日
+ *
+ */
 public class Constants {
     
     public static void main(String[] args) {
