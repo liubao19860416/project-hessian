@@ -3,7 +3,7 @@ package com.hessian.api;
 import java.io.InputStream;
 
 /**
- * 文件上传服务接口
+ * 文件上传服务接口~
  */
 public interface FileUploadService {
 
