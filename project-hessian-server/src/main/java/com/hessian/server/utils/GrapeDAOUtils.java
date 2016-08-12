@@ -73,8 +73,8 @@ public final class GrapeDAOUtils {
     }
 
     public static <E extends BaseEntity> void populate(E bean,
-            Map<String, Object> properties) throws IllegalAccessException,
-            InvocationTargetException {
+            Map<String, Object> properties) throws /*IllegalAccessException,
+            InvocationTargetException*/ ReflectiveOperationException{
         BeanUtilsBean.getInstance().populate(bean, properties);
     }
 
@@ -325,7 +325,7 @@ public final class GrapeDAOUtils {
     /**
      * 将两个对象进行属性拷贝
      */
-    public static <T> List<T> fromListMapToListT( Class<T> classType, List<Map<String,Object>> orginal ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public static <T> List<T> fromListMapToListT( Class<T> classType, List<Map<String,Object>> orginal ) throws /*IllegalAccessException, InvocationTargetException, NoSuchMethodException*/ ReflectiveOperationException{
         String text=JSON.toJSONString(orginal);
         //该方法在迭代的时候,需要类型强制转换,否则会报错,所以选第一种方法即可;
         //List<T> dest2 = JSONObject.parseObject(text, List.class);
